@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics,mixins
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -57,13 +57,37 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
 Product_delete_View = ProductDeleteAPIView.as_view()
 
 
-class ProductListAPIView(generics.ListAPIView):
+# class ProductListAPIView(generics.ListAPIView):
 
 
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+
+# product_list_view = ProductListAPIView.as_view()
+
+
+# Mixins
+class ProductMixinView(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    generics.GenericAPIView
+    ):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    lookup_field = 'pk'
+    
+    def get(self, request, *args, **kwargs): # HTTP -> GET
+        pk = kwargs.get("pk")
+        if pk is not None:
+            return self.retrieve(request, *args, **kwargs)
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs): # HTTP -> POST
+        self.create(request, *args, **kwargs)
 
-product_list_view = ProductListAPIView.as_view()
+        
+product_mixin_view = ProductMixinView.as_view()
 
 
 @api_view(["GET", "POST"])
@@ -92,3 +116,5 @@ def product_alt_view(request,pk=None , *args, **kwargs):
             serializer.save(content=content)
             return Response(serializer.data)
         return Response({"invalid": "not good data"}, status=400)
+
+
