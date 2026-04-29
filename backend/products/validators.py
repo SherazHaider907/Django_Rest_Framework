@@ -14,7 +14,7 @@ from .models import Product
 
 def validate_title_no_heloo(value):
     if "hello" in value.lower():
-        raise serializers.ValidationError(f"Hello is not allowed in the title")
+        raise serializers.ValidationError(f"{value} is not allowed in the title")
     return value
 
-Unique_product_title = UniqueValidator(queryset=Product.objects.all(), message="This is already a product name")
+Unique_product_title = UniqueValidator(queryset=Product.objects.all(), lookup='iexact', message="This title has already been used")
