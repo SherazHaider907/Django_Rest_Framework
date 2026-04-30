@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 from api.mixins import StaffEditorPermissionMixin, UserQuerySetMixin
 
 from .models import Product
+
 from .serializers import ProductSerializer
 
 

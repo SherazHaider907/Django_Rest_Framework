@@ -18,3 +18,5 @@ def validate_title_no_heloo(value):
     return value
 
 Unique_product_title = UniqueValidator(queryset=Product.objects.all(), lookup='iexact', message="This title has already been used")
+
+

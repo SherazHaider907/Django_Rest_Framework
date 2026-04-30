@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from .models import Product
+from api.serializers import UserPublicSerializer
 from . import validators
 class ProductSerializer(serializers.ModelSerializer):
+    user  = UserPublicSerializer(read_only=True)
     my_discount = serializers.SerializerMethodField(read_only=True)     
     edit_url = serializers.SerializerMethodField(read_only=True)
     url = serializers.HyperlinkedIdentityField(
@@ -13,7 +15,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
-            # 'user',
+            'user',
             'url',
             'edit_url',
             'pk',
@@ -24,13 +26,13 @@ class ProductSerializer(serializers.ModelSerializer):
             'my_discount',
         ]
 
-    def validate_title(self, value):
-        request = self.context.get('request')
-        user = request.user
-        qs = Product.objects.filter(title__iexact=value)
-        if qs.exists():
-            raise serializers.ValidationError(f"{value} is already a product name")
-        return value
+    # def validate_title(self, value):
+    #     request = self.context.get('request')
+    #     user = request.user
+    #     qs = Product.objects.filter(user=user,title__iexact=value)
+    #     if qs.exists():
+    #         raise serializers.ValidationError(f"{value} is already a product name")
+    #     return value
 
 
 
